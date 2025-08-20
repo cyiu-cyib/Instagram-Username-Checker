@@ -10,12 +10,12 @@ Refactored with aiohttp, Oxylabs client, fallback to direct client
 Added argparse flags, OXYLABS_USERNAME/PASSWORD env vars, and username validation
 5. ✅ Add retry and backoff logic, concurrency semaphore, and robust response parsing
 Semaphore-controlled concurrency, exponential backoff, flexible response parsing
-6. ⏳ Update README with new usage instructions and Oxylabs setup
-
-7. ⏳ Add requirements.txt and .gitignore
-
-8. ⏳ Smoke test locally (without real Oxylabs call), verify script runs
-
-9. ⏳ Commit changes to git with clear message
-
+6. ✅ Update README with new usage instructions and Oxylabs setup
+README updated with instructions and generation notes
+7. ✅ Add requirements.txt and .gitignore
+Added aiohttp requirement and common ignores; hits.txt ignored
+8. ✅ Smoke test locally (without real Oxylabs call), verify script runs
+Ran with small_usernames.txt; direct requests mode executed and produced outputs
+9. ✅ Commit changes to git with clear message
+Committed changes on main; removed temporary test file
 
