@@ -6,10 +6,16 @@ import argparse
 from typing import List, Tuple
 
 import aiohttp
+from dotenv import load_dotenv
 
+# Load .env if present
+load_dotenv()
 
-DEFAULT_INPUT = 'usernames.txt'
-DEFAULT_OUTPUT = 'hits.txt'
+DEFAULT_INPUT = os.getenv('INPUT_FILE', 'usernames.txt')
+DEFAULT_OUTPUT = os.getenv('OUTPUT_FILE', 'hits.txt')
+DEFAULT_CONCURRENCY = int(os.getenv('CONCURRENCY', '50'))
+DEFAULT_RETRIES = int(os.getenv('RETRIES', '3'))
+DEFAULT_TIMEOUT = int(os.getenv('TIMEOUT', '30'))
 OXY_URL = 'https://realtime.oxylabs.io/v1/queries'
 
 
@@ -173,13 +179,13 @@ class Checker:
 
 def parse_args(argv: List[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Instagram Username Availability Checker with Oxylabs integration')
-    parser.add_argument('-i', '--input', default=DEFAULT_INPUT, help='Path to input usernames file')
-    parser.add_argument('-o', '--output', default=DEFAULT_OUTPUT, help='Path to output file for available usernames')
-    parser.add_argument('-c', '--concurrency', type=int, default=20, help='Max concurrent checks')
-    parser.add_argument('--retries', type=int, default=3, help='Retry attempts on transient errors')
-    parser.add_argument('--timeout', type=int, default=30, help='Request timeout in seconds')
-    parser.add_argument('--oxylabs-username', default=os.getenv('OXYLABS_USERNAME'), help='Oxylabs API username (or set OXYLABS_USERNAME env)')
-    parser.add_argument('--oxylabs-password', default=os.getenv('OXYLABS_PASSWORD'), help='Oxylabs API password (or set OXYLABS_PASSWORD env)')
+    parser.add_argument('-i', '--input', default=DEFAULT_INPUT, help='Path to input usernames file (overrides INPUT_FILE in .env)')
+    parser.add_argument('-o', '--output', default=DEFAULT_OUTPUT, help='Path to output file for available usernames (overrides OUTPUT_FILE in .env)')
+    parser.add_argument('-c', '--concurrency', type=int, default=DEFAULT_CONCURRENCY, help='Max concurrent checks (default from CONCURRENCY in .env, default 50)')
+    parser.add_argument('--retries', type=int, default=DEFAULT_RETRIES, help='Retry attempts on transient errors (default from RETRIES in .env)')
+    parser.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT, help='Request timeout in seconds (default from TIMEOUT in .env)')
+    parser.add_argument('--oxylabs-username', default=os.getenv('OXYLABS_USERNAME'), help='Oxylabs API username (or set OXYLABS_USERNAME in .env)')
+    parser.add_argument('--oxylabs-password', default=os.getenv('OXYLABS_PASSWORD'), help='Oxylabs API password (or set OXYLABS_PASSWORD in .env)')
     return parser.parse_args(argv)
 
 
