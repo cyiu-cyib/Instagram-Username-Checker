@@ -1,29 +1,57 @@
-# Instagram-Rare-Username-Checker
-A simple asynchronous tool that checks if an Instagram username is taken or not
+# Instagram Username Checker (Oxylabs-enabled)
+
+An asynchronous tool that checks if an Instagram username is available using the Oxylabs Real-Time Crawler API, with a fallback to direct requests.
 
 ## About
-It is a proxyless tool that checks the availablity of Instagram usernames in blazing fast
-speed. It checks if the http request status code is ```404```. If it is, it will automatically assume that the Instagram username is not taken. 
+- Uses Oxylabs Real-Time Crawler to request https://www.instagram.com/<username>/ and treats HTTP 404 as available, anything else as unavailable.
+- Fallback mode (when no Oxylabs credentials provided) performs direct HTTP GET requests. This can be less accurate and subject to rate limits.
+- Results: available usernames are appended to hits.txt (or a custom output file).
 
-This tool can be inaccurate at times because it does not use the actual Instagram api. It only checks if the username's Instagram url is invalid.
+This tool is for educational purposes only.
 
-This tool is used for educational purposes only. 
+## Installation
+- Python 3.9+
+- Install dependencies:
 
-## Picture
-![Picture](https://i.ibb.co/DYkq3rK/Screenshot-159.png)
+```bash
+pip install -r requirements.txt
+```
 
-## How to use
-- Python must be installed
+## Usage
+- Put usernames (one per line) in usernames.txt, or generate programmatically.
+- Run with Oxylabs credentials via env vars or CLI flags.
 
-1. If you dont have python installed, download python 3.7.6
-and make sure you click on the 'ADD TO PATH' option during
-the installation.
+```bash
+# Using environment variables
+export OXYLABS_USERNAME="your_user"
+export OXYLABS_PASSWORD="your_pass"
+python main.py -i usernames.txt -o hits.txt -c 50 --timeout 45
 
-2. Type ```pip install aiohttp``` in cmd
+# Or via flags
+python main.py --oxylabs-username your_user --oxylabs-password your_pass -c 50
+```
 
-3.  Add the usernames you want to check in ```usernames.txt```. Do not put a lot of usernames because you can get rate limited and it can become more inaccurate. It is recommended to check around 500 usernames then wait 24 hours before you can check again.  
+Arguments:
+- -i/--input: path to input usernames file (default usernames.txt)
+- -o/--output: path for available usernames (default hits.txt)
+- -c/--concurrency: number of concurrent checks (default 20)
+- --retries: retry attempts on transient errors (default 3)
+- --timeout: request timeout seconds (default 30)
+- --oxylabs-username/--oxylabs-password: Oxylabs credentials (or use env vars)
 
-4.  Make sure you are in the same directory as the folder you downloaded it in.  Type
-```python main.py``` in cmd to run
+## Username generation
+To generate all 3- and 4-letter lowercase combinations in usernames.txt:
 
-5. Once it is done running, available usernames will be saved in ```hits.txt```. 
+```python
+import itertools, string
+with open('usernames.txt', 'w') as f:
+    for n in (3, 4):
+        for combo in itertools.product(string.ascii_lowercase, repeat=n):
+            f.write(''.join(combo) + '\n')
+```
+
+Note: This creates 17,576 (3-letter) + 456,976 (4-letter) = 474,552 usernames.
+
+## Notes
+- Only characters [A-Za-z0-9._] are considered valid; names starting/ending with '.' are skipped.
+- Available usernames are appended to the output file.
